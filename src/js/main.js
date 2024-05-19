@@ -8,7 +8,22 @@ window.addEventListener('load', function () { // when the page loads
     const ctx = canvas.getContext('2d'); // get the 2d context of the canvas
 
     class InputHandler { // class to handle input
-
+        constructor(game) {
+            this.game = game;
+            window.addEventListener('keydown', (event) => {
+                if ((event.key === 'ArrowUp' || event.key === 'ArrowDown')
+                    && !this.game.keys.includes(event.key)) {
+                    this.game.keys.push(event.key);
+                }
+                console.log(this.game.keys);
+            });
+            window.addEventListener('keyup', (event) => {
+                if (this.game.keys.includes(event.key)) {
+                    this.game.keys = this.game.keys.filter(key => key !== event.key);
+                }
+                console.log(this.game.keys);
+            });
+        }
     }
 
     class Projectile { // class to handle projectiles - lasers, bullets, etc.
@@ -26,9 +41,24 @@ window.addEventListener('load', function () { // when the page loads
             this.width = 50; // the same as the sprite
             this.x = 20;
             this.y = 100;
-            this.speedY = 1;
+            this.speedY = 0;
+            this.maxSpeed = 2;
         }
         update() {
+            const { maxSpeed, game: { keys } } = this;
+
+            switch (true) {
+                case keys.includes('ArrowUp'):
+                    this.speedY = -maxSpeed;
+                    break;
+                case keys.includes('ArrowDown'):
+                    this.speedY = maxSpeed;
+                    break;
+                default:
+                    this.speedY = 0;
+                    break;
+            }
+
             this.y += this.speedY;
         }
         draw(context) {
@@ -56,7 +86,9 @@ window.addEventListener('load', function () { // when the page loads
         constructor(width, height) {
             this.width = width;
             this.height = height;
+            this.keys = [];
             this.player = new Player(this);
+            this.InputHandler = new InputHandler(this);
         }
         update() {
             this.player.update();
