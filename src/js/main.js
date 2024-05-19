@@ -1,3 +1,5 @@
+document.onmousemove = (e) => e.target.title = `${e.pageX}, ${e.pageY}`;
+
 window.addEventListener('load', function () { // when the page loads
     const canvas = document.getElementById('game-canvas');
     canvas.width = 1500;
@@ -20,11 +22,11 @@ window.addEventListener('load', function () { // when the page loads
     class Player { // class to handle the main character
         constructor(game) {
             this.game = game;
-            this.width = 120; // the same as the sprite
-            this.height = 50; // the same as the sprite
+            this.height = 120; // the same as the sprite
+            this.width = 50; // the same as the sprite
             this.x = 20;
             this.y = 100;
-            this.speedY = 0;
+            this.speedY = 1;
         }
         update() {
             this.y += this.speedY;
@@ -66,4 +68,13 @@ window.addEventListener('load', function () { // when the page loads
 
     const game = new Game(canvas.width, canvas.height); // create a new game instance
 
+    // animation loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // clear the canvas - comment this line to see the trail effect
+        game.update(); // update the game
+        game.draw(ctx); // draw the game
+        requestAnimationFrame(animate); // call the game loop again
+    }
+
+    animate(); // start the game loop
 });
